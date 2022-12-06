@@ -126,7 +126,7 @@ function ThumbnailPreview({
 }
 
 
-const DefinitionListContainer = ({itemslist}) => {
+const DefinitionListContainer = ({ itemslist }) => {
 
     return (
         <div className="DList-containner">
@@ -137,7 +137,7 @@ const DefinitionListContainer = ({itemslist}) => {
     );
 };
 
-const MapThumbnailView = ({ initialBbox, layers, onMapThumbnail, onClose, savingThumbnailMap } ) => {
+const MapThumbnailView = ({ initialBbox, layers, onMapThumbnail, onClose, savingThumbnailMap }) => {
 
     const [currentBbox, setCurrentBbox] = useState();
     const { bounds, crs } = initialBbox;
@@ -179,7 +179,7 @@ const MapThumbnailView = ({ initialBbox, layers, onMapThumbnail, onClose, saving
                 }
             </div>
             <div className="gn-detail-extent-action">
-                <Button className="btn-primary" onClick={() => onMapThumbnail(currentBbox)} ><Message msgId={"gnhome.apply"} /></Button><Button onClick={() => onClose(false) }><i className="fa fa-close"/></Button></div>
+                <Button className="btn-primary" onClick={() => onMapThumbnail(currentBbox)} ><Message msgId={"gnhome.apply"} /></Button><Button onClick={() => onClose(false)}><i className="fa fa-close" /></Button></div>
         </div>
     );
 
@@ -276,12 +276,12 @@ function DetailsPanel({
 
         let dataType;
         switch (true) {
-        case data === 'None':
-        case data?.length === 0:
-            dataType = undefined;
-            break;
-        default:
-            dataType = data;
+            case data === 'None':
+            case data?.length === 0:
+                dataType = undefined;
+                break;
+            default:
+                dataType = data;
         }
 
 
@@ -302,11 +302,11 @@ function DetailsPanel({
         },
         {
             "label": "Abstract",
-            "value": validateDataType(resource?.raw_abstract)?.length > 100 ? <div>{validateDataType(resource?.raw_abstract)?.substring(0, 100)}{extraContent}{' '}<a className="read-more-link" onClick={() => setReadMore(!readMore) }>{linkName}</a></div> : validateDataType(resource?.raw_abstract)
+            "value": validateDataType(resource?.raw_abstract)?.length > 100 ? <div>{validateDataType(resource?.raw_abstract)?.substring(0, 100)}{extraContent}{' '}<a className="read-more-link" onClick={() => setReadMore(!readMore)}>{linkName}</a></div> : validateDataType(resource?.raw_abstract)
         },
         {
             "label": "Owner",
-            "value": validateDataType(resource?.owner?.username) && <a href={`/people/profile/${resource?.owner?.username}/`}> {(resource?.owner?.first_name !== "" && resource?.owner?.last_name !== "" ) ? (resource?.owner?.first_name + " " + resource?.owner?.last_name) : resource?.owner?.username} </a>
+            "value": validateDataType(resource?.owner?.username) && <a href={`/people/profile/${resource?.owner?.username}/`}> {(resource?.owner?.first_name !== "" && resource?.owner?.last_name !== "") ? (resource?.owner?.first_name + " " + resource?.owner?.last_name) : resource?.owner?.username} </a>
         },
         {
             "label": "Created",
@@ -362,11 +362,18 @@ function DetailsPanel({
         }
     ];
 
+    // creating a list of point of contacts
+    let point_of_contacts_strings = [];
+    resource?.poc.forEach(function (poc) {
+        var describer = (poc.first_name !== "" && poc.last_name !== "") ? (poc.first_name + " " + poc.last_name) : poc.username;
+        point_of_contacts_strings.push(`< a href={'/messages/create/${poc.pk}/'}> ${describer} </a >`)
+    });
+    let point_of_contacts_joined = point_of_contacts_strings.join(", ");
 
     const extraItemsList = [
         {
             "label": "Point of Contact",
-            "value": <a href={`/messages/create/${resource?.poc?.pk}/`}> {(resource?.poc?.first_name !== "" && resource?.poc?.last_name !== "" ) ? (resource?.poc?.first_name + " " + resource?.poc?.last_name) : resource?.poc?.username} </a>
+            "value": point_of_contacts_joined
         },
         {
             "label": "License",
@@ -402,7 +409,7 @@ function DetailsPanel({
         },
         {
             "label": "Temporal extent",
-            "value": (resource?.temporal_extent_start) ? resource?.temporal_extent_start + " - " : undefined  + (resource?.temporal_extent_end) ? resource?.temporal_extent_end : undefined
+            "value": (resource?.temporal_extent_start) ? resource?.temporal_extent_start + " - " : undefined + (resource?.temporal_extent_end) ? resource?.temporal_extent_end : undefined
         },
         {
             "label": "Spatial Representation Type",
@@ -486,7 +493,7 @@ function DetailsPanel({
                                 left: 0,
                                 backgroundColor: 'inherit'
                             }} />)
-                            : undefined )
+                            : undefined)
                     }
                     {loading && <div
                         className="gn-details-panel-preview-loader"
@@ -510,27 +517,27 @@ function DetailsPanel({
                     {editThumbnail && <div className="gn-details-panel-content-img">
                         {!activeEditMode && <ThumbnailPreview src={resource?.thumbnail_url} icon={icon} />}
                         {activeEditMode && <div className="gn-details-panel-preview inediting">
-                            {!enableMapViewer ? <> <div {...(!resource?.thumbnail_url && {style: {outline: '1px solid #eee'}})}><EditThumbnail
+                            {!enableMapViewer ? <> <div {...(!resource?.thumbnail_url && { style: { outline: '1px solid #eee' } })}><EditThumbnail
                                 onEdit={editThumbnail}
                                 image={() => getResourceImageSource(resource?.thumbnail_url)}
                                 thumbnailUpdating={resourceThumbnailUpdating}
                             /></div>
-                            {
-                                ((resource.resource_type === ResourceTypes.MAP || resource.resource_type === ResourceTypes.DATASET) && (resource.ptype !== GXP_PTYPES.REST_IMG || resource.ptype !== GXP_PTYPES.REST_MAP)) &&
-                                ( <><MapThumbnailButtonToolTip
-                                    variant="default"
-                                    onClick={() => onClose(!enableMapViewer)}
-                                    className="map-thumbnail"
-                                    tooltip={<Message msgId="gnviewer.saveMapThumbnail" />}
-                                    tooltipPosition={"top"}
-                                >
-                                    <FaIcon name="map" />
-                                </MapThumbnailButtonToolTip>
-                                </>)
-                            }
-                            {isThumbnailChanged && <Button style={{
-                                left: ((resource.resource_type === ResourceTypes.MAP || resource.resource_type === ResourceTypes.DATASET) && (resource.ptype !== GXP_PTYPES.REST_IMG || resource.ptype !== GXP_PTYPES.REST_MAP)) ? '85px' : '50px'
-                            }} variant="primary" className="map-thumbnail apply-button" onClick={handleResourceThumbnailUpdate}><Message msgId={"gnhome.apply"} /></Button>}
+                                {
+                                    ((resource.resource_type === ResourceTypes.MAP || resource.resource_type === ResourceTypes.DATASET) && (resource.ptype !== GXP_PTYPES.REST_IMG || resource.ptype !== GXP_PTYPES.REST_MAP)) &&
+                                    (<><MapThumbnailButtonToolTip
+                                        variant="default"
+                                        onClick={() => onClose(!enableMapViewer)}
+                                        className="map-thumbnail"
+                                        tooltip={<Message msgId="gnviewer.saveMapThumbnail" />}
+                                        tooltipPosition={"top"}
+                                    >
+                                        <FaIcon name="map" />
+                                    </MapThumbnailButtonToolTip>
+                                    </>)
+                                }
+                                {isThumbnailChanged && <Button style={{
+                                    left: ((resource.resource_type === ResourceTypes.MAP || resource.resource_type === ResourceTypes.DATASET) && (resource.ptype !== GXP_PTYPES.REST_IMG || resource.ptype !== GXP_PTYPES.REST_MAP)) ? '85px' : '50px'
+                                }} variant="primary" className="map-thumbnail apply-button" onClick={handleResourceThumbnailUpdate}><Message msgId={"gnhome.apply"} /></Button>}
                             </>
                                 : <MapThumbnailView
                                     layers={layers}
@@ -547,7 +554,7 @@ function DetailsPanel({
 
                     <div className="gn-details-panel-content-text">
                         <div className="gn-details-panel-title" >
-                            <span className="gn-details-panel-title-icon" >{!downloading ? <FaIcon name={icon} /> : <Spinner />} </span> <EditTitle disabled={!activeEditMode}  title={resource?.title} onEdit={editTitle} >
+                            <span className="gn-details-panel-title-icon" >{!downloading ? <FaIcon name={icon} /> : <Spinner />} </span> <EditTitle disabled={!activeEditMode} title={resource?.title} onEdit={editTitle} >
 
                             </EditTitle>
 
@@ -556,17 +563,17 @@ function DetailsPanel({
                                     <ResourceStatus resource={resource} />
                                     {
                                         enableFavorite &&
-                                    <Button
-                                        variant="default"
-                                        onClick={debounce(() => handleFavorite(favorite), 500)}>
-                                        <FaIcon name={favorite ? 'star' : 'star-o'} />
-                                    </Button>
+                                        <Button
+                                            variant="default"
+                                            onClick={debounce(() => handleFavorite(favorite), 500)}>
+                                            <FaIcon name={favorite ? 'star' : 'star-o'} />
+                                        </Button>
                                     }
                                     {downloadUrl &&
-                                    <Button variant="default"
-                                        onClick={() => onAction(resource)} >
-                                        <FaIcon name="download" />
-                                    </Button>}
+                                        <Button variant="default"
+                                            onClick={() => onAction(resource)} >
+                                            <FaIcon name="download" />
+                                        </Button>}
 
                                     {detailUrl && <CopyToClipboard
                                         tooltipPosition="top"
@@ -596,13 +603,13 @@ function DetailsPanel({
 
                         </div>
                         {<p className="gn-details-panel-meta-text">
-                            {resource?.owner &&  <>{resource?.owner.avatar &&
-                            <img src={resource?.owner.avatar} alt={getUserName(resource?.owner)} className="gn-card-author-image" />
+                            {resource?.owner && <>{resource?.owner.avatar &&
+                                <img src={resource?.owner.avatar} alt={getUserName(resource?.owner)} className="gn-card-author-image" />
                             }
-                            <ResourceMessage type={resource?.resource_type} />
-                            <AuthorInfo resource={resource} formatHref={formatHref} style={{ margin: 0 }} detailsPanel /></>}
+                                <ResourceMessage type={resource?.resource_type} />
+                                <AuthorInfo resource={resource} formatHref={formatHref} style={{ margin: 0 }} detailsPanel /></>}
                             {(resource?.date_type && resource?.date)
-                            && <>{' '}/{' '}{moment(resource.date).format('MMMM Do YYYY')}</>}
+                                && <>{' '}/{' '}{moment(resource.date).format('MMMM Do YYYY')}</>}
                         </p>
                         }
 
@@ -620,7 +627,7 @@ function DetailsPanel({
                         </p>
                     </div>
                 </div>
-                { editTitle && <div className="gn-details-panel-info"><Tabs itemsTab={itemsTab} /></div>}
+                {editTitle && <div className="gn-details-panel-info"><Tabs itemsTab={itemsTab} /></div>}
             </section>
         </div>
     );
@@ -634,7 +641,7 @@ DetailsPanel.defaultProps = {
     width: 696,
     getTypesInfo: getResourceTypesInfo,
     isThumbnailChanged: false,
-    onAction: () => {}
+    onAction: () => { }
 };
 
 export default DetailsPanel;
