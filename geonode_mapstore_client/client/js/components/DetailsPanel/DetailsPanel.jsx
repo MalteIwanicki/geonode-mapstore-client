@@ -373,7 +373,7 @@ function DetailsPanel({
     const extraItemsList = [
         {
             "label": "Point of Contact",
-            "value": point_of_contacts_joined
+            "value": "point_of_contacts_joined"#TODO Malte change this into the var 
         },
         {
             "label": "License",
