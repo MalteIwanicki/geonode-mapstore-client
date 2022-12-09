@@ -363,10 +363,12 @@ function DetailsPanel({
     ];
 
 
+
     const extraItemsList = [
         {
             "label": "Point of Contact",
-            "value": <a href={`/messages/create/${resource?.poc?.pk}/`}> {(resource?.poc?.first_name !== "" && resource?.poc?.last_name !== "" ) ? (resource?.poc?.first_name + " " + resource?.poc?.last_name) : resource?.poc?.username} </a>
+            "value": resource?.poc.map(poc => <a href={`/messages/create/${poc.pk}/`}> {(poc.first_name !== "" && poc.last_name !== "") ? (poc.first_name + " " + poc.last_name) : poc.username} </a>).reduce((prev, curr) => [prev, ', ', curr])
+        },
         },
         {
             "label": "License",
